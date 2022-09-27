@@ -1,2 +1,2 @@
-def calculate_influence_category():
+def calculate_influence_category(dataframe):
     pass
