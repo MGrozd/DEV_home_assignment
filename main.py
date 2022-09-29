@@ -6,6 +6,13 @@ from pandas import read_feather
 from app.influence_category import calculate_influence_category
 from app import influence_score
 
+logger = logging.getLogger(__name__)
+f_handler = logging.FileHandler('app.log')
+f_format = logging.Formatter('%(asctime)s [%(levelname)s] - %(name)s - %(message)s')
+f_handler.setFormatter(f_format)
+logger.addHandler(f_handler)
+logger.setLevel(logging.INFO)
+
 CONFIG_FILENAME = 'conf.ini'
 
 
@@ -30,8 +37,9 @@ def main():
             output_filepath = Path(output_filepath)
             output_filepath.parent.mkdir(parents=True, exist_ok=True)
             influence_category_dataframe.to_feather(output_filepath)
+            logger.info(f'Made file at path: {output_filepath}')
     except Exception as err:
-        print(err)
+        logger.exception("Exception occurred")
 
 
 if __name__ == '__main__':

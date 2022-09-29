@@ -1,3 +1,4 @@
+from main import logger
 import pandas as pd
 
 SHARED_POST_FACTOR = 0.5
@@ -17,7 +18,8 @@ def complicated_influence_score(dataframes: list) -> pd.DataFrame:
         followers_dataframe = dataframes[0]
         activity_dataframe = dataframes[1]
     except IndexError:
-        print('Missing data!')
+        logger.error('Check in config file path to files!')
+        print('Missing data. Check in config file path to files!')
     influencers = followers_dataframe['user_id'].value_counts().index.values
     followers = followers_dataframe['user_id'].value_counts().values
     influencers_followers = {influencers: followers for (influencers, followers) in zip(influencers, followers)}
