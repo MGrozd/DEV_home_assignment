@@ -1,31 +1,37 @@
 import configparser
+import logging
+from pathlib import Path
 from pandas import read_feather
 
-from app.influence_score import simple_influence_score, complicated_influence_score
 from app.influence_category import calculate_influence_category
+from app import influence_score
 
 CONFIG_FILENAME = 'conf.ini'
-TEST_PATH = 'tests/assets/followers_example.feather'
 
 
 def main():
-    config = configparser.ConfigParser()
-    config.read(CONFIG_FILENAME)
-    followers_dataframe = read_feather(TEST_PATH)
-    activity_dataframe = read_feather('tests/assets/activity_example.feather')
+    try:
+        config = configparser.ConfigParser()
+        config.read(CONFIG_FILENAME)
+        calculation_strategies = config.sections()
+        for calculation_strategy in calculation_strategies:
+            input_files_paths_list = list(config[calculation_strategy].keys())
+            chosen_calculation_strategy = config[calculation_strategy][input_files_paths_list[0]]
+            input_files_paths = [input_files_path for input_files_path in input_files_paths_list[1:-1]]
+            feather_data = [
+                read_feather(config[calculation_strategy][input_files_path]) for input_files_path in input_files_paths
+            ]
+            output_filepath = config[calculation_strategy][input_files_paths_list[-1]]
 
-    simple_influence_dataframe = calculate_influence_category(
-        simple_influence_score(followers_dataframe)
-    )
-    print(simple_influence_dataframe.head())
-    simple_influence_dataframe.to_feather('./test.feather')
-    complicated_influence_score(followers_dataframe, activity_dataframe)
-
-    complicated_influence_dataframe = calculate_influence_category(
-        complicated_influence_score(followers_dataframe, activity_dataframe)
-    )
-    print(complicated_influence_dataframe.head())
-    complicated_influence_dataframe.to_feather('./test_complicated.feather')
+            influence_category_dataframe = calculate_influence_category(
+                getattr(influence_score, f'{chosen_calculation_strategy}')(feather_data)
+            )
+            print(influence_category_dataframe.head())
+            output_filepath = Path(output_filepath)
+            output_filepath.parent.mkdir(parents=True, exist_ok=True)
+            influence_category_dataframe.to_feather(output_filepath)
+    except Exception as err:
+        print(err)
 
 
 if __name__ == '__main__':

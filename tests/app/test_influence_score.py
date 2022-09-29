@@ -14,18 +14,18 @@ class TestInfluenceCategory(unittest.TestCase):
         self.followers_example_data = read_feather(followers_example_file_path)
         self.activity_example_data = read_feather(activity_example_file_path)
         self.expected_simple_influence_score_data = DataFrame({'user_id': Series(['11', '22', '33', '55']),
-                                        'influence_score': Series([4, 3, 2, 2]),
-                                        })
-        self.expected_complicated_influence_score_data = DataFrame({'user_id': Series(['11', '22', '33', '55']),
-                                                               'influence_score': Series([5.0, 2.5, 1.5, 1.0]),
+                                                               'influence_score': Series([4, 3, 2, 2]),
                                                                })
+        self.expected_complicated_influence_score_data = DataFrame({'user_id': Series(['11', '22', '33', '55']),
+                                                                    'influence_score': Series([5.0, 2.5, 1.5, 1.0]),
+                                                                    })
 
     def test_simple_influence_score(self):
-        assert_frame_equal(simple_influence_score(self.followers_example_data),
+        assert_frame_equal(simple_influence_score([self.followers_example_data]),
                            self.expected_simple_influence_score_data)
 
     def test_complicated_influence_score(self):
-        assert_frame_equal(complicated_influence_score(self.followers_example_data, self.activity_example_data),
+        assert_frame_equal(complicated_influence_score([self.followers_example_data, self.activity_example_data]),
                            self.expected_complicated_influence_score_data)
 
 
