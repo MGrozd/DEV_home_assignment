@@ -39,5 +39,5 @@ def complicated_influence_score(followers_dataframe, activity_dataframe):
 
     influence_score_series = followers_dataframe['user_id'].value_counts()
     influence_score_dataframe = pd.DataFrame(
-        {'user_id': influence_score_series.index.values, 'influence_score': influence_score})
+        {'user_id': influence_score_series.index.values, 'influence_score': pd.Series(influence_score)})
     return influence_score_dataframe

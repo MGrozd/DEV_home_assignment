@@ -20,6 +20,5 @@ def calculate_influence_category(dataframe):
         elif percent_of_user <= 0.5:
             influence_category.append(INFLUENCE_CATEGORY['bottom 50%'])
     influence_category_df = DataFrame({'influence_category': influence_category})
-    new_df = concat([dataframe, influence_category_df], axis=1)
-    print(new_df)
-    return new_df
+    calculated_influence_category_df = concat([dataframe, influence_category_df], axis=1)
+    return calculated_influence_category_df
